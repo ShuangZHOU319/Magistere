@@ -31,10 +31,13 @@ chrb_bound = inf;
 for i = 1:num_perturbations
     u = perturbations(i, :)';
     numerator = (u' * u)^2;
-    denominator = (dR_dx' * u)^2 + (dR_dy' * u)^2;
-    chrb_bound_i = numerator / denominator;
-    if chrb_bound_i < chrb_bound
-        chrb_bound = chrb_bound_i;
+    denominator = (sum(dR_dx .* u(1)))^2 + (sum(dR_dy .* u(2)))^2; % Use element-wise multiplication
+    % Avoid division by zero or very small values
+    if denominator > 1e-10
+        chrb_bound_i = numerator / denominator;
+        if chrb_bound_i < chrb_bound
+            chrb_bound = chrb_bound_i;
+        end
     end
 end
 chrb_bound = sqrt(chrb_bound);
